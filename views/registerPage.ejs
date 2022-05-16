@@ -106,28 +106,31 @@
 <body class="text-center">
 
   <main class="form-signin">
-    <form action="/register" method="post">
+    <form id="registerForm" action="/register" method="post">
       <img class="mb-4" src="/img/login.png" alt="" width="72" height="72">
       <h1 class="h3 mb-3 fw-normal">Cadastre-se</h1>
 
       <div class="form-floating">
-        <input type="text" name="name" class="form-control" id="floatingInputName" placeholder="Insira seu nome">
+        <input type="text" name="name" class="form-control" id="floatingInputName" placeholder="Insira seu nome"
+          required>
         <label for="floatingInputName">Nome completo</label>
       </div>
 
       <div class="form-floating">
-        <input type="email" name="email" class="form-control" id="floatingInputEmail" placeholder="Insira seu email">
+        <input type="email" name="email" class="form-control" id="floatingInputEmail" placeholder="Insira seu email"
+          required>
         <label for="floatingInputEmail">Email</label>
       </div>
 
       <div class="row">
         <div class="col-6 form-floating">
-          <input type="date" name="birthDate" class="form-control" id="floatingInputDate" placeholder="Insira seu nome">
+          <input type="date" name="birthDate" class="form-control" id="floatingInputDate" placeholder="Insira seu nome"
+            required>
           <label for="floatingInputDate" style="margin-left: 10px;">Data de nascimento</label>
         </div>
 
         <div class="col-6 form-floating">
-          <select class="form-select" id="floatingGener" name="gener" aria-label="Default select example">
+          <select class="form-select" id="floatingGener" name="gener" required>
             <option value="Feminino">Feminino</option>
             <option value="Masculino">Masculino</option>
             <option value="Outro">Outro</option>
@@ -137,30 +140,74 @@
       </div>
 
       <div class="form-floating">
-        <input type="phone" name="phone" class="form-control" id="floatingInputDate" placeholder="Insira seu nome"
+        <input type="phone" name="phone" class="form-control" id="floatingInputPhone" placeholder="Insira seu nome"
           required>
-        <label for="floatingInputDate">Telefone</label>
+        <label for="floatingInputPhone">Telefone</label>
       </div>
 
       <div class="row">
         <div class="col-6 form-floating my-0">
-          <input type="Password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <input type="Password" name="password" class="form-control" id="floatingPassword" placeholder="Password"
+            required>
           <label for="floatingPassword" style="margin-left: 10px;">Senha</label>
         </div>
 
         <div class="col-6 form-floating my-0">
           <input type="password" name="confirmPassword" class="form-control" id="floatingConfirmPassword"
-            placeholder="Password">
+            placeholder="Password" required>
           <label for="floatingConfirmPassword" style="margin-left: 10px;">Confirme sua senha</label>
         </div>
       </div>
 
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Cadastrar</button>
-      <p class="mt-5 mb-3 text-muted"><a href="https://github.com/wesley3979/WEB-2022.1" style="
+      <button class="w-100 btn btn-lg btn-primary" type="submit" onclick="return checkForm()">Cadastrar</button>
+
+      <%if (messageReturn) { %>
+        <div class="alert alert-danger" role="alert">
+          <%=messageReturn%>
+        </div>
+        <% } %>
+
+          <div id="alertError" hidden class="alert alert-danger mt-3">
+          </div>
+
+
+
+          <p class="mt-5 mb-3 text-muted"><a href="https://github.com/wesley3979/WEB-2022.1" style="
           text-decoration:none">&copy;
-          wesley3979/WEB-2022.1</a></p>
+              wesley3979/WEB-2022.1</a></p>
     </form>
   </main>
+
+  <script>
+    function checkForm() {
+      var form = document.getElementById('registerForm');
+      var password = document.getElementById('floatingPassword');
+      var confirmPassword = document.getElementById('floatingConfirmPassword');
+      var birthDate = document.getElementById('floatingInputDate');
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+      var message
+      var alertError = document.getElementById('alertError');
+
+      const timeElapsed = Date.now();
+      const today = new Date(timeElapsed);
+
+      if (new Date(birthDate.value) > today) {
+        message = "Data inválida"
+        alertError.removeAttribute("hidden")
+        alertError.innerHTML = message
+        return false
+      }
+      else if (password.value !== confirmPassword.value) {
+        message = "Senhas diferentes"
+        alertError.removeAttribute("hidden")
+        alertError.innerHTML = message
+        return false
+      }
+
+
+      return true
+    }
+  </script>
 
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"

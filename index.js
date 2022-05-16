@@ -18,14 +18,12 @@ app.set('views', './views');
 
 app.use(cookieSession({
   name: 'session',
-  // keys: ['c293x8b6234z82n938246bc2938x4zb234'],
   secret: 'c293x8b6234z82n938246bc2938x4zb234',
-  // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 
 app.get('/login', async (req, res) => {
-  res.render('loginPage');
+  res.render('loginPage', { messageReturn: null });
 });
 
 app.post('/login', async (req, res) => {
@@ -36,19 +34,19 @@ app.post('/login', async (req, res) => {
     if (login(password, user.salt, user.hash)) {
       user.password = null;
       req.session.user = user;
-      console.log("login feito")
-      res.redirect('/')
+      return res.redirect('/')
     }
+    else
+      return res.render('loginPage', { messageReturn: "Senha incorreta" })
   }
   else {
-    console.log("error login")
-    res.redirect('/login')
+    return res.render('loginPage', { messageReturn: "Email não cadastrado no sistema" });
   }
 
 });
 
 app.get('/register', async (req, res) => {
-  res.render('registerPage');
+  res.render('registerPage', { messageReturn: null });
 });
 
 app.post('/register', async (req, res) => {
@@ -56,8 +54,7 @@ app.post('/register', async (req, res) => {
 
   const existsUser = await database.getUser(email)
   if (existsUser) {
-    console.log("este email já foi usado")
-    return res.redirect('/register')
+    return res.render('registerPage', { messageReturn: `O email ${email} já foi utilizado` })
   }
 
   const userCredetials = gerarSenha(password)
@@ -65,14 +62,15 @@ app.post('/register', async (req, res) => {
   const Createduser = await database.insertUser({ name, email, birthDate, gener, phone, "hash": userCredetials.hash, "salt": userCredetials.salt })
   if (Createduser) {
     req.session.user = { name, email, birthDate, gener, phone, "hash": userCredetials.hash, "salt": userCredetials.salt };
-    console.log("login feito")
+    return res.redirect('/')
   }
-  return res.redirect('/')
+
+  return res.render('registerPage', { messageReturn: null })
 });
 
 app.get('/', async (req, res) => {
   var products = await database.getAllProducts()
-  res.render('rentPage', { products });
+  res.render('homePage', { products });
 });
 
 app.listen(port, () => {
